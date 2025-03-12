@@ -1,5 +1,126 @@
 # 쇼핑몰 상품 관리 API
 
+## Environment
+- Python
+- Django
+- Mysql
+- Docker
+
+## Run
+- mysql 컨테이너 실행
+```
+docker-compose up
+```
+- django 실행
+```
+python manage.py runserver
+```
+
+## Project Structure
+```
+$ tree -I venv
+
+.
+├── README.md
+├── docker-compose.yml
+├── fixtures
+│   └── sample.json
+├── manage.py
+├── millie_shop_api
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── settings.cpython-310.pyc
+│   │   ├── urls.cpython-310.pyc
+│   │   └── wsgi.cpython-310.pyc
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── products
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── admin.cpython-310.pyc
+│   │   ├── apps.cpython-310.pyc
+│   │   ├── models.cpython-310.pyc
+│   │   ├── serializers.cpython-310.pyc
+│   │   └── views.cpython-310.pyc
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_alter_category_created_at_alter_category_updated_at_and_more.py
+│   │   ├── 0003_product_coupons.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       ├── 0001_initial.cpython-310.pyc
+│   │       ├── 0002_alter_category_created_at_alter_category_updated_at_and_more.cpython-310.pyc
+│   │       ├── 0003_product_coupons.cpython-310.pyc
+│   │       └── __init__.cpython-310.pyc
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tests.py
+│   └── views.py
+├── requirements.txt
+└── templates
+```
+
+## DDL
+```
+-- 카테고리
+CREATE TABLE `products_category` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+-- 상품
+CREATE TABLE `products_product` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `price` int unsigned NOT NULL,
+  `discount_rate` decimal(5,2) NOT NULL,
+  `coupon_applicable` tinyint(1) NOT NULL,
+  `category_id` bigint NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `products_product_category_id_9b594869_fk_products_category_id` (`category_id`),
+  CONSTRAINT `products_product_category_id_9b594869_fk_products_category_id` FOREIGN KEY (`category_id`) REFERENCES `products_category` (`id`),
+  CONSTRAINT `products_product_chk_1` CHECK ((`price` >= 0))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+;
+
+-- 쿠폰
+CREATE TABLE `products_coupon` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `code` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `discount_rate` decimal(5,2) NOT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+-- 상품별 사용한 쿠폰
+CREATE TABLE `products_product_coupons` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `product_id` bigint NOT NULL,
+  `coupon_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `products_product_coupons_product_id_coupon_id_a2713097_uniq` (`product_id`,`coupon_id`),
+  KEY `products_product_cou_coupon_id_dbc8bee2_fk_products_` (`coupon_id`),
+  CONSTRAINT `products_product_cou_coupon_id_dbc8bee2_fk_products_` FOREIGN KEY (`coupon_id`) REFERENCES `products_coupon` (`id`),
+  CONSTRAINT `products_product_cou_product_id_17ad83df_fk_products_` FOREIGN KEY (`product_id`) REFERENCES `products_product` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+```
+
 ## 샘플 데이터 추가
 ```
 python manage.py loaddata fixtures/sample.json
