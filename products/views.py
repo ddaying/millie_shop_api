@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 
+from .filters import ProductFilter
 from .models import Product, Category, Coupon
 from .serializers import ProductSerializer, CategorySerializer, CouponSerializer
 
@@ -18,6 +19,7 @@ class CouponViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filterset_class = ProductFilter
     filterset_fields = ['category']
     ordering_fields = ['name', 'price', 'created_at']
     ordering = ['name']
