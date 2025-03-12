@@ -1,0 +1,84 @@
+[
+  {
+    "model": "products.category",
+    "pk": 1,
+    "fields": {
+      "name": "패션의류"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 2,
+    "fields": {
+      "name": "디지털/가전"
+    }
+  },
+  {
+    "model": "products.coupon",
+    "pk": 1,
+    "fields": {
+      "code": "DISCOUNT_10",
+      "discount_rate": 0.10
+    }
+  },
+  {
+    "model": "products.coupon",
+    "pk": 2,
+    "fields": {
+      "code": "DISCOUNT_20",
+      "discount_rate": 0.20
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "name": "상품1",
+      "description": "상품 설명 입니다.",
+      "price": 10000,
+      "category": 1,
+      "discount_rate": 0.05,
+      "coupon_applicable": true,
+      "coupons": [1, 2]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "name": "상품2",
+      "description": "상품 설명 입니다.",
+      "price": 20000,
+      "category": 2,
+      "discount_rate": 0.15,
+      "coupon_applicable": true,
+      "coupons": [1]
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "name": "상품3",
+      "description": "상품 설명 입니다.",
+      "price": 1000,
+      "category": 2,
+      "discount_rate": 0.15,
+      "coupon_applicable": false,
+      "coupons": []
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 4,
+    "fields": {
+      "name": "상품4",
+      "description": "상품 설명 입니다.",
+      "price": 5000,
+      "category": 2,
+      "discount_rate": 0,
+      "coupon_applicable": false,
+      "coupons": []
+    }
+  }
+]

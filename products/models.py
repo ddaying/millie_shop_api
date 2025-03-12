@@ -2,9 +2,8 @@ from django.db import models
 
 
 class AuditModel(models.Model):
-    """Abstract base class that adds created_at and updated_at fields to models."""
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         abstract = True
@@ -32,16 +31,22 @@ class Product(AuditModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="products")
     discount_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.0, help_text="할인율 (예: 0.10은 10% 할인)")
     coupon_applicable = models.BooleanField(default=True)
+    coupons = models.ManyToManyField('Coupon', blank=True)
 
     def discounted_price(self):
         """할인율을 적용한 가격 반환"""
-        return int(self.price * (1 - self.discount_rate))
+        if self.discount_rate:
+            return self.price * (1 - self.discount_rate)
 
-    def final_price(self, coupon=None):
+        return self.price
+
+    def get_final_price(self, coupon=None):
         """ 쿠폰이 있을 경우 최종 가격 계산 """
         discounted_price = self.discounted_price()
+
         if coupon and self.coupon_applicable:
             return discounted_price * (1 - coupon.discount_rate)
+
         return discounted_price
 
     def __str__(self):
